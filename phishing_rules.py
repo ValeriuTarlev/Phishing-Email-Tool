@@ -1,16 +1,14 @@
-def check_keywords(text): 
-    phishing_keywords = [
+import re
+
+# List of Phishing keywords
+phishing_keywords = [
         'action', 'document', 'verification', 'urgent', 'efax', 'vm', 'request', 'required', 'new', 'message', 'invoice'
     
-    ]
-    text = text.lower()
-    found_keywords = [ word for word in phishing_keywords if word in text]
-    return found_keywords
+]
 
+# List of trusted domain
+trusted_domain = [
 
-    
-def domain_sender_check(email_domain):
-    trusted_domain = [
         # Tech Companies
         "google.com", "gmail.com", "microsoft.com", "outlook.com", "apple.com", "icloud.com",
         "amazon.com", "aws.amazon.com", "facebook.com", "meta.com", "instagram.com", "linkedin.com",
@@ -36,7 +34,8 @@ def domain_sender_check(email_domain):
         "reddit.com", "quora.com", "pinterest.com", "twitter.com", "x.com"
     ]        
     
-    suspicious_tlds = [
+# List of suspicious TLDs 
+suspicious_tlds = [
     ".ru",     # Russia
     ".tk",     # Tokelau (free domain provider, often abused)
     ".ml",     # Mali (also free)
@@ -60,13 +59,65 @@ def domain_sender_check(email_domain):
     ".science" # Used in fake academic or research sites
 ]
 
+# List of URL shorteners
+shorteners = [
+    "bit.ly",
+    "tinyurl.com",
+    "t.co",              
+    "ow.ly",            
+    "goo.gl",               
+    "is.gd",
+    "buff.ly",           
+    "rebrand.ly",
+    "adf.ly",
+    "shorte.st",
+    "cutt.ly",
+    "rb.gy",             
+    "soo.gd",
+    "v.gd",
+    "cli.re",
+    "bl.ink",
+    "trib.al",          
+    "po.st",
+    "mcaf.ee",           
+    "qr.ae",             
+    "lnkd.in",           
+    "bit.do",
+    "lc.chat",
+    "1url.com",
+    "u.to",
+    "yourls.org"         
+]
+
+
+def check_keywords(text): 
+    text = text.lower()
+    found_keywords = [ word for word in phishing_keywords if word in text]
+    return found_keywords
+
+
+def domain_sender_check(email_domain):
     domain = email_domain.split('@')[-1].lower()
-    
     if domain in trusted_domain and not any(domain.endswith(tld) for tld in suspicious_tlds):
-            return "Domain looks legit"
+        return "Domain looks legit"
     else:
-        return "Domain suspiscious"
+        return "Domain suspicious"
     
+    
+def check_suspicious_link(url): 
+    ip_pattern = re.compile(r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b')
+    
+    if ip_pattern.search(url): 
+        return "Suspicious: IP address link detected"
+    if any(shortener in url for shortener in shorteners):
+                return "Suspicious: URL shortener detected"
+    if any(url.endswith(tld) for tld in suspicious_tlds):
+         return "Suspicious: Shady TLD detected"
+    
+    return "Link looks clean"
+
+    
+
     
     
     
