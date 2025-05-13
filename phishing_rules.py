@@ -89,7 +89,7 @@ shorteners = [
     "yourls.org"         
 ]
 
-# 
+
 def check_keywords(text): 
     """
     Scans the provided email text for known phishing keywords.
