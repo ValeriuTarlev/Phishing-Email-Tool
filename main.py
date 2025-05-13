@@ -5,7 +5,7 @@ sample_email = 'Urgent! A new document has to be signed. It need immediate actio
 
 # Check for phishing words
 keywords_found = check_keywords(sample_email)
-print('suspicious words found:', keywords_found)
+print('Suspicious words found:', keywords_found)
 
 
 suspicious_senders = [

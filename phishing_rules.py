@@ -89,14 +89,32 @@ shorteners = [
     "yourls.org"         
 ]
 
-
+# 
 def check_keywords(text): 
+    """
+    Scans the provided email text for known phishing keywords.
+    
+    Args:
+        text (str): The full text of the email (subject + body).
+    
+    Returns:
+        list: A list of phishing-related keywords found in the text.
+    """
     text = text.lower()
-    found_keywords = [ word for word in phishing_keywords if word in text]
+    found_keywords = [word for word in phishing_keywords if word in text]
     return found_keywords
 
 
 def domain_sender_check(email_domain):
+    """
+    Analyzes the sender's domain to determine if it's trusted or suspicious.
+    
+    Args:
+        email_domain (str): The sender's email address.
+    
+    Returns:
+        str: 'Domain looks legit' or 'Domain suspicious'.
+    """
     domain = email_domain.split('@')[-1].lower()
     if domain in trusted_domain and not any(domain.endswith(tld) for tld in suspicious_tlds):
         return "Domain looks legit"
@@ -104,7 +122,17 @@ def domain_sender_check(email_domain):
         return "Domain suspicious"
     
     
-def check_suspicious_link(url): 
+def check_suspicious_link(url):
+    """
+    Analyzes a URL to detect suspicious patterns like IP addresses, 
+    URL shorteners, or shady top-level domains (TLDs).
+    
+    Args:
+        url (str): A URL found in the email.
+    
+    Returns:
+        str: A description of whether the link is suspicious or clean.
+    """ 
     ip_pattern = re.compile(r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b')
     
     if ip_pattern.search(url): 
@@ -115,6 +143,61 @@ def check_suspicious_link(url):
          return "Suspicious: Shady TLD detected"
     
     return "Link looks clean"
+
+
+def analyze_email(subject, body, sender, link):
+    """
+    Performs a full phishing analysis on the given email components.
+
+    Calculates a phishing risk score based on keyword matches, sender domain,
+    and suspicious link characteristics.
+
+    Args:
+        subject (str): The email subject line.
+        body (str): The email body text.
+        sender (str): The sender's email address.
+        link (str): A link found in the email.
+
+    Returns:
+        dict: A dictionary containing the score, risk level, and details of each analysis.
+    """
+    score = 0
+
+    keywords = check_keywords(subject + " " + body)
+    score += len(keywords) * 5
+
+    domain_result = domain_sender_check(sender) 
+    if domain_result != "Domain looks legit":
+         score += 20
+
+    link_result = check_suspicious_link(link)
+    if "IP address" in link_result:
+        score += 20
+    elif "URL shortener" in link_result:
+        score += 15 
+    elif "Shady TLD" in link_result:
+        score += 15
+
+    if score > 100:
+        score = 100
+
+    # Determine the Risk Level
+    if score >= 61: 
+         risk = "High Risk"
+    elif score >= 31: 
+         risk = "Medium Risk"
+    else:
+         score = "Low Risk"
+
+    return {
+        "score": score,
+        "risk_level": risk,
+        "details": {
+             "keywords": keywords,
+             "domain": domain_result, 
+             "link": link_result
+        } 
+    } 
 
     
 
