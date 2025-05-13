@@ -1,5 +1,6 @@
 from phishing_rules import check_keywords, domain_sender_check, check_suspicious_link, analyze_email
 
+
 # Sample email text
 sample_email = 'Urgent! A new document has to be signed. It need immediate action invoice'
 
@@ -31,11 +32,19 @@ for link in suspicious_link:
 
 # Run the full phishing risk analysis on a single email
 result = analyze_email(
-    subject="URGENT: Payment due now", 
-    body="Please click her to confirm the payment method",
-    sender="admin@secure-amazon.tk",
-    link="http://192.168.1.1"
+    subject="Your Amazon details", 
+    body="Your order #123-4567890-1234567 has been shipped and is on its way.", 
+    sender="www.@amazon.com",
+    link=" "
 )
 
 # Display the final analysis result with score and breakdown
-print(result)
+print("\n--- Phishing Risk Analysis ---")
+print(f"Score: {result['score']}")
+print(f"Risk Level: {result['risk_level']}")
+print("Details:")
+print(f"- Keywords: {result['details']['keywords']}")
+print(f"- Domain: {result['details']['domain']}")
+print(f"- Link: {result['details']['link']}")
+print(f"- AI Result: {result['details']['ai_result']}")
+
