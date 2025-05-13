@@ -26,7 +26,21 @@ def check_ai_text(text):
     """
     response = requests.post(API_URL, headers=headers, json={"inputs": text})
     response.raise_for_status()
-    result = response.json()[0]
-    label = result["label"].lower()
-    score = result["score"]
-    return label, score
+    result = response.json()
+
+    print("API raw response:", result)
+
+   
+    if isinstance(result, list) and isinstance(result[0], list):
+        best_result = max(result[0], key=lambda x: x["score"]) 
+
+        label_map = {
+            "label_0": "ham",
+            "label_1": "spam"
+        }
+
+        label = label_map.get(best_result["label"].lower(), "unknown")
+        score = best_result["score"]
+        return label, score
+    else:
+        return "unknown", 0.0
