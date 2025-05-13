@@ -1,4 +1,5 @@
 import re
+from ai_model import check_ai_text
 
 # List of Phishing keywords
 phishing_keywords = [
@@ -178,24 +179,33 @@ def analyze_email(subject, body, sender, link):
     elif "Shady TLD" in link_result:
         score += 15
 
+    ai_label, ai_score = check_ai_text(subject + " " + body)
+
+    #if ai_label in ["spam", "phishing"] and ai_score > 0.95:
+        #score += 20
+
     if score > 100:
         score = 100
 
     # Determine the Risk Level
     if score >= 61: 
-         risk = "High Risk"
+        risk = "High Risk"
     elif score >= 31: 
-         risk = "Medium Risk"
+        risk = "Medium Risk"
     else:
-         score = "Low Risk"
+        risk = "Low Risk"
 
     return {
         "score": score,
         "risk_level": risk,
         "details": {
-             "keywords": keywords,
-             "domain": domain_result, 
-             "link": link_result
+            "keywords": keywords,
+            "domain": domain_result, 
+            "link": link_result,
+        "ai_result": {
+            "label": ai_label,
+            "confidence": round(ai_score, 2)
+            }
         } 
     } 
 
