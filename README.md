@@ -29,3 +29,30 @@ Installation
    ```bash
    git clone https://github.com/your-username/email-phishing-detector.git
    cd email-phishing-detector
+   ```
+2. Create and activate a virtual environment:
+
+   On Windows:
+   ```bash
+   python -m venv venv
+   venv\Scripts\activate
+   ```
+   
+   On macOS / Linux:
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+  
+3. Install the dependencies:
+  ```bash
+  pip install -r requirements.txt
+  ```
+4. Run the Flask app:
+  ```bash
+  python run.py
+  ```
+5. Open your browser and go to:
+  ```
+   https://127.0.0.1:5000
+  ```
