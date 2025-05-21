@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Email Phishing Detector</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f9;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: vertical;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-top: 1px solid #ccc;
+        }
+
+        .result p {
+            margin: 8px 0;
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Email Phishing Detector</h1>
+
+        <form method="POST">
+            <label for="subject">Email Subject:</label>
+            <input type="text" name="subject" id="subject" placeholder="Enter subject...">
+
+            <label for="body">Email Body:</label>
+            <textarea name="body" id="body" rows="8" placeholder="Paste the email content here..." required></textarea>
+
+            <label for="sender">Sender:</label>
+            <input type="text" name="sender" id="sender" placeholder="e.g. billing@paypal.com" required>
+
+            <label for="link">Link (optional):</label>
+            <input type="text" name="link" id="link" placeholder="e.g. http://suspicious-login.com">
+
+            <button type="submit">Analyze Email</button>
+        </form>
+
+        {% if result %}
+        <div class="result">
+            <h2>Analysis Result</h2>
+            <p><strong>Phishing Score:</strong> {{ result["score"] }}/100</p>
+
+            {% if result["ai_result"] %}
+                <p><strong>AI Detection:</strong> 
+                    <span class="highlight">{{ result["ai_result"]["label"] }}</span> 
+                    (Confidence: {{ result["ai_result"]["confidence"] }})
+                </p>
+            {% else %}
+                <p><strong>AI Detection:</strong> Not available</p>
+            {% endif %}
+
+            <p><strong>Final Assessment:</strong> {{ result["final_analysis"] }}</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
